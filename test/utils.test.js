@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   splitObjectByKeys,
   processAttributesAndConfig,
-} from "./utils";
+} from "../src/utils";
 
 describe("splitObjectByKeys", () => {
   it("should split object by given keys", () => {
