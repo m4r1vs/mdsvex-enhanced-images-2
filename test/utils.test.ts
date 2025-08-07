@@ -2,7 +2,9 @@ import { describe, it, expect } from "vitest";
 import {
   splitObjectByKeys,
   processAttributesAndConfig,
-} from "../src/utils";
+  type EnhancedImageConfig,
+  type ProcessedAttributes,
+} from "../src/utils.js";
 
 describe("splitObjectByKeys", () => {
   it("should split object by given keys", () => {
@@ -39,7 +41,7 @@ describe("splitObjectByKeys", () => {
 
   it("should handle empty keys array", () => {
     const obj = { a: 1, b: 2, c: 3 };
-    const keys = [];
+    const keys: string[] = [];
     const [included, excluded] = splitObjectByKeys(obj, keys);
     expect(included).toEqual({});
     expect(excluded).toEqual({ a: 1, b: 2, c: 3 });
@@ -58,19 +60,22 @@ describe("processAttributesAndConfig", () => {
   it("should correctly parse and combine attributes and directives from URL and config", () => {
     const nodeUrl =
       "./image.jpg?class=img-class;another-class&fetchpriority=high&custom=customValue";
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: { loading: "lazy", decoding: "async", class: "configClass" },
       imagetoolsDirectives: { blur: 3, rotate: 90 },
     };
-    const result = processAttributesAndConfig(nodeUrl, config);
+    const result: ProcessedAttributes = processAttributesAndConfig(
+      nodeUrl,
+      config,
+    );
     expect(result.combinedClassesAttrStr).toBe(
-      'class="configClass img-class another-class"'
+      'class="configClass img-class another-class"',
     );
     expect(result.combinedAttributesStr).toBe(
-      'loading="lazy" decoding="async" fetchpriority="high"'
+      'loading="lazy" decoding="async" fetchpriority="high"',
     );
     expect(result.combinedDirectivesUrlParams).toBe(
-      "&blur=3&rotate=90&custom=customValue"
+      "&blur=3&rotate=90&custom=customValue",
     );
   });
 
@@ -78,37 +83,37 @@ describe("processAttributesAndConfig", () => {
     const nodeUrl =
       "./image.jpg?class=img-class;another-class&fetchpriority=high&custom=customValue";
     const nodeUrl2 =
-    "./image.jpg?class=img-class&fetchpriority=high&custom=customValue";  
-    const config = {
+      "./image.jpg?class=img-class&fetchpriority=high&custom=customValue";
+    const config: EnhancedImageConfig = {
       attributes: { loading: "lazy", decoding: "async", class: "configClass" },
       imagetoolsDirectives: { blur: 3, rotate: 90 },
     };
     const result = processAttributesAndConfig(nodeUrl, config);
     const result2 = processAttributesAndConfig(nodeUrl2, config);
     expect(result.combinedClassesAttrStr).toBe(
-      'class="configClass img-class another-class"'
+      'class="configClass img-class another-class"',
     );
     expect(result.combinedAttributesStr).toBe(
-      'loading="lazy" decoding="async" fetchpriority="high"'
+      'loading="lazy" decoding="async" fetchpriority="high"',
     );
     expect(result.combinedDirectivesUrlParams).toBe(
-      "&blur=3&rotate=90&custom=customValue"
+      "&blur=3&rotate=90&custom=customValue",
     );
     expect(result2.combinedClassesAttrStr).toBe(
-      'class="configClass img-class"'
+      'class="configClass img-class"',
     );
     expect(result2.combinedAttributesStr).toBe(
-      'loading="lazy" decoding="async" fetchpriority="high"'
+      'loading="lazy" decoding="async" fetchpriority="high"',
     );
     expect(result2.combinedDirectivesUrlParams).toBe(
-      "&blur=3&rotate=90&custom=customValue"
+      "&blur=3&rotate=90&custom=customValue",
     );
   });
 
   it("should correctly parse, deduplicate and combine repeated and dubiously expressed css classes ", () => {
     const nodeUrl =
       "./image.jpg?class=img-class;another-class&class=myclass;myclass2&class=myclass3&class=myclass3&fetchpriority=high&custom=customValue";
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: {
         loading: "lazy",
         class: " dubiousInConfig myclass",
@@ -118,13 +123,13 @@ describe("processAttributesAndConfig", () => {
     };
     const result = processAttributesAndConfig(nodeUrl, config);
     expect(result.combinedClassesAttrStr).toBe(
-      'class="dubiousInConfig myclass img-class another-class myclass2 myclass3"'
+      'class="dubiousInConfig myclass img-class another-class myclass2 myclass3"',
     );
     expect(result.combinedAttributesStr).toBe(
-      'loading="lazy" decoding="async" fetchpriority="high"'
+      'loading="lazy" decoding="async" fetchpriority="high"',
     );
     expect(result.combinedDirectivesUrlParams).toBe(
-      "&blur=3&rotate=90&custom=customValue"
+      "&blur=3&rotate=90&custom=customValue",
     );
   });
 
@@ -146,7 +151,7 @@ describe("processAttributesAndConfig", () => {
 
   it("should handle empty config members and empty url parameters)", () => {
     const nodeUrl = "./image.jpg";
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: {},
       imagetoolsDirectives: {},
     };
@@ -158,50 +163,55 @@ describe("processAttributesAndConfig", () => {
 
   it("should handle empty URL parameters", () => {
     const nodeUrl = "./image.jpg";
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: { loading: "lazy", decoding: "async" },
       imagetoolsDirectives: { blur: 3, rotate: 90 },
     };
     const result = processAttributesAndConfig(nodeUrl, config);
     expect(result.combinedClassesAttrStr).toBe("");
     expect(result.combinedAttributesStr).toBe(
-      'loading="lazy" decoding="async"'
+      'loading="lazy" decoding="async"',
     );
     expect(result.combinedDirectivesUrlParams).toBe("&blur=3&rotate=90");
   });
 
   it("should give precedence to URL parameters over config", () => {
     const nodeUrl = "http://localhost/image.jpg?loading=eager&decoding=sync";
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: { loading: "lazy", decoding: "async" },
     };
     const result = processAttributesAndConfig(nodeUrl, config);
     expect(result.combinedAttributesStr).toBe(
-      'loading="eager" decoding="sync"'
+      'loading="eager" decoding="sync"',
     );
   });
 
   it("should handle malformed URLs gracefully", () => {
-    const nodeUrl = "./image.jpg?class=test&=invalid&fetchpriority=high&=another-invalid";
+    const nodeUrl =
+      "./image.jpg?class=test&=invalid&fetchpriority=high&=another-invalid";
     const result = processAttributesAndConfig(nodeUrl);
     expect(result.combinedClassesAttrStr).toBe('class="test"');
     expect(result.combinedAttributesStr).toBe('fetchpriority="high"');
   });
 
   it("should handle special characters in class names", () => {
-    const nodeUrl = "./image.jpg?class=test-class_with_underscores;class-with-dashes;class.with.dots";
+    const nodeUrl =
+      "./image.jpg?class=test-class_with_underscores;class-with-dashes;class.with.dots";
     const result = processAttributesAndConfig(nodeUrl);
     expect(result.combinedClassesAttrStr).toBe(
-      'class="test-class_with_underscores class-with-dashes class.with.dots"'
+      'class="test-class_with_underscores class-with-dashes class.with.dots"',
     );
   });
 
   it("should handle encoded characters in URL parameters", () => {
-    const nodeUrl = "./image.jpg?class=my%20class&fetchpriority=high&custom=value%26with%26ampersands";
+    const nodeUrl =
+      "./image.jpg?class=my%20class&fetchpriority=high&custom=value%26with%26ampersands";
     const result = processAttributesAndConfig(nodeUrl);
     expect(result.combinedClassesAttrStr).toBe('class="my class"');
     expect(result.combinedAttributesStr).toBe('fetchpriority="high"');
-    expect(result.combinedDirectivesUrlParams).toBe("&custom=value&with&ampersands");
+    expect(result.combinedDirectivesUrlParams).toBe(
+      "&custom=value&with&ampersands",
+    );
   });
 
   it("should handle undefined config gracefully", () => {
@@ -220,11 +230,11 @@ describe("processAttributesAndConfig", () => {
     expect(result.combinedDirectivesUrlParams).toBe("");
   });
 
-  it("should handle config with null attributes", () => {
+  it("should handle config with undefined attributes", () => {
     const nodeUrl = "./image.jpg?class=test";
-    const config = {
-      attributes: null,
-      imagetoolsDirectives: { blur: 5 }
+    const config: EnhancedImageConfig = {
+      attributes: undefined,
+      imagetoolsDirectives: { blur: 5 },
     };
     const result = processAttributesAndConfig(nodeUrl, config);
     expect(result.combinedClassesAttrStr).toBe('class="test"');
@@ -232,11 +242,11 @@ describe("processAttributesAndConfig", () => {
     expect(result.combinedDirectivesUrlParams).toBe("&blur=5");
   });
 
-  it("should handle config with null imagetoolsDirectives", () => {
+  it("should handle config with undefined imagetoolsDirectives", () => {
     const nodeUrl = "./image.jpg?class=test&blur=10";
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: { loading: "lazy" },
-      imagetoolsDirectives: null
+      imagetoolsDirectives: undefined,
     };
     const result = processAttributesAndConfig(nodeUrl, config);
     expect(result.combinedClassesAttrStr).toBe('class="test"');
@@ -246,19 +256,21 @@ describe("processAttributesAndConfig", () => {
 
   it("should handle numeric values in attributes", () => {
     const nodeUrl = "./image.jpg?width=800&height=600";
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: { tabindex: -1 },
-      imagetoolsDirectives: { quality: 85 }
+      imagetoolsDirectives: { quality: 85 },
     };
     const result = processAttributesAndConfig(nodeUrl, config);
     expect(result.combinedAttributesStr).toBe('tabindex="-1"');
-    expect(result.combinedDirectivesUrlParams).toBe("&quality=85&width=800&height=600");
+    expect(result.combinedDirectivesUrlParams).toBe(
+      "&quality=85&width=800&height=600",
+    );
   });
 
   it("should handle boolean values in config", () => {
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: { hidden: true, disabled: false },
-      imagetoolsDirectives: { progressive: true }
+      imagetoolsDirectives: { progressive: true },
     };
     const nodeUrl = "./image.jpg";
     const result = processAttributesAndConfig(nodeUrl, config);
@@ -267,7 +279,10 @@ describe("processAttributesAndConfig", () => {
   });
 
   it("should handle extremely long class lists", () => {
-    const longClassList = Array.from({ length: 50 }, (_, i) => `class-${i}`).join(";");
+    const longClassList = Array.from(
+      { length: 50 },
+      (_, i) => `class-${i}`,
+    ).join(";");
     const nodeUrl = `./image.jpg?class=${longClassList}`;
     const result = processAttributesAndConfig(nodeUrl);
     expect(result.combinedClassesAttrStr).toContain('class="');
@@ -275,20 +290,22 @@ describe("processAttributesAndConfig", () => {
   });
 
   it("should handle empty string values in config", () => {
-    const config = {
+    const config: EnhancedImageConfig = {
       attributes: { loading: "", class: "" },
-      imagetoolsDirectives: { format: "" }
+      imagetoolsDirectives: { format: "" },
     };
     const nodeUrl = "./image.jpg?fetchpriority=high";
     const result = processAttributesAndConfig(nodeUrl, config);
     expect(result.combinedClassesAttrStr).toBe("");
-    expect(result.combinedAttributesStr).toBe('loading="" fetchpriority="high"');
+    expect(result.combinedAttributesStr).toBe(
+      'loading="" fetchpriority="high"',
+    );
     expect(result.combinedDirectivesUrlParams).toBe("&format=");
   });
 
   it("should preserve order of attributes from config and URL", () => {
-    const config = {
-      attributes: { loading: "lazy", fetchpriority: "low", decoding: "async" }
+    const config: EnhancedImageConfig = {
+      attributes: { loading: "lazy", fetchpriority: "low", decoding: "async" },
     };
     const nodeUrl = "./image.jpg?fetchpriority=high&width=800";
     const result = processAttributesAndConfig(nodeUrl, config);

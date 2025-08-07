@@ -2,16 +2,41 @@
   "name": "@lzinga/mdsvex-enhanced-images",
   "version": "1.0.3",
   "description": "Replaces the markdown image with an enhanced:img from the @sveltejs/enhanced-img.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "test": "vitest"
+    "build": "npm run clean && tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist",
+    "lint": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "prepublishOnly": "npm run clean && npm run lint && npm run build && npm run test:run"
   },
   "type": "module",
   "keywords": [
     "svelte",
+    "sveltekit",
     "enhanced:img",
     "mdsvex",
-    "remark"
+    "remark",
+    "typescript",
+    "markdown-images",
+    "imagetools"
   ],
   "repository": {
     "type": "git",
@@ -27,6 +52,13 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^24.2.0",
+    "@types/unist": "^3.0.3",
+    "@vitest/coverage-v8": "^3.0.7",
+    "prettier": "3.6.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.2",
     "vite": "^6.2.0",
     "vitest": "^3.0.7"
   }

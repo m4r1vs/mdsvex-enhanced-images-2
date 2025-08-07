@@ -1,7 +1,7 @@
 import { mdsvex } from "mdsvex";
 import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import enhancedImage from 'mdsvex-enhanced-images';
+import enhancedImage from '../dist/index.js';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
