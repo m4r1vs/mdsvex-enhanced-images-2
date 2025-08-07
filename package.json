@@ -25,6 +25,10 @@
     "lint": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "demo:install": "cd demo && npm install",
+    "demo:build": "npm run build && cd demo && npm run build",
+    "demo:serve": "npm run demo:build && cd demo && npm run preview",
+    "demo:dev": "npm run build && cd demo && npm run dev",
     "prepublishOnly": "npm run clean && npm run lint && npm run build && npm run test:run"
   },
   "type": "module",

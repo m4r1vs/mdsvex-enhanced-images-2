@@ -6,8 +6,11 @@
 	<a href="https://github.com/lzinga/mdsvex-enhanced-images/commits/main/"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/lzinga/mdsvex-enhanced-images"></a>
 </p>
 
+<p align="center">
+	<strong>🚀 <a href="https://lzinga.github.io/mdsvex-enhanced-images/">Live Demo</a></strong>
+</p>
 
-This plugin allows you to: 
+This plugin allows you to:
 - use relative urls to images from the markdown file while also using the `enhanced:img` library from `@sveltejs/enhanced-img`.
 - add CSS class names and extra attributes (`loading`, `fetchpriority`, and `decoding`) to images directly in markdown (image by image) or through the plugin configuration (to all images).
 - add imagetools directives to images in markdown (image by image) or through the plugin configuration (to all images).
@@ -15,6 +18,38 @@ This plugin allows you to:
 Special thanks to https://github.com/mattjennings/mdsvex-relative-images, for the inspiration.
 
 Feel free to open a PR or an issue if you have any suggestions or feature requests!
+
+## 🎯 Live Demo
+
+Experience the plugin in action with our [interactive demo](https://lzinga.github.io/mdsvex-enhanced-images/) hosted on GitHub Pages. The demo showcases:
+
+- **Basic image processing** with automatic `enhanced:img` component generation
+- **CSS class application** via URL parameters
+- **HTML attribute injection** for performance optimization
+- **Image processing directives** like rotation, tinting, and effects
+- **Real-time examples** of all plugin features
+
+The demo is automatically deployed from the `/demo` directory using SvelteKit's static adapter.
+
+### 🛠️ Local Demo Development
+
+To run the demo locally for testing and development:
+
+```bash
+# Install demo dependencies
+npm run demo:install
+
+# Run demo in development mode (with hot reloading)
+npm run demo:dev
+
+# Build and serve demo locally (mimics production)
+npm run demo:serve
+
+# Build demo only
+npm run demo:build
+```
+
+These scripts will automatically build the plugin first, then set up the demo environment.
 
 ## Contributors
 
