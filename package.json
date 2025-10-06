@@ -1,6 +1,6 @@
 {
   "name": "@lzinga/mdsvex-enhanced-images",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Replaces the markdown image with an enhanced:img from the @sveltejs/enhanced-img.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
