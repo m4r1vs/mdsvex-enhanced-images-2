@@ -51,10 +51,20 @@ export default function enhancedImage(
       )}?enhanced${combinedDirectivesUrlParams}';\n`;
       scripts += importStatement;
 
-      // Generate enhanced:img component
-      const imageComponent = `<enhanced:img src={${importName}} alt="${
-        node.alt ?? ""
-      }" ${combinedClassesAttrStr} ${combinedAttributesStr}></enhanced:img>`;
+      // Generate picture and img components
+      const alt = (node.alt ?? "").replace(/"/g, "&quot;");
+      const imageComponent = `
+        {#if typeof ${importName} === 'string'}
+          <img src={${importName}} alt="${alt}" ${combinedClassesAttrStr} ${combinedAttributesStr} />
+        {:else}
+          <picture>
+            {#each Object.entries(${importName}.sources) as [format, srcset]}
+              <source {srcset} type={'image/' + format} />
+            {/each}
+            <img src={${importName}.img.src} width={${importName}.img.w} height={${importName}.img.h} alt="${alt}" ${combinedClassesAttrStr} ${combinedAttributesStr} />
+          </picture>
+        {/if}
+        `.trim();
 
       // Transform node to HTML
       (node as any).type = "html";

@@ -97,10 +97,15 @@ describe("enhancedImage", () => {
           // Verify node transformation
           expect((imageNode as any).type).toBe("html");
           expect(imageNode.url).toBe("./test-image.jpg");
-          expect((imageNode as any).value).toContain("<enhanced:img");
+          // Expect the expanded Svelte logic
+          expect((imageNode as any).value).toContain("{#if typeof _img");
+          expect((imageNode as any).value).toContain("<picture>");
+          expect((imageNode as any).value).toContain("<img");
+
           expect((imageNode as any).value).toContain('alt="Test Image"');
           expect((imageNode as any).value).toContain('class="my-class"');
           expect((imageNode as any).value).toContain('fetchpriority="high"');
+          // Check for src usage in both branches
           expect((imageNode as any).value).toMatch(/src=\{_img\w+\}/);
         }
       },
@@ -308,7 +313,8 @@ describe("enhancedImage", () => {
           };
           visitor(imageNode);
 
-          expect((imageNode as any).value).toContain("<enhanced:img");
+          expect((imageNode as any).value).toContain("{#if typeof _img");
+          expect((imageNode as any).value).toContain("<picture>");
         }
       },
     );
